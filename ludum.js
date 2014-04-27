@@ -39,9 +39,9 @@ function setHeights(){
 
 function setTimers(scene){
 	for (var i = 0; i < keys1.length; i++) {
-		scene.timers[keys1[i]] = new Splat.Timer(undefined, 500, function(){this.reset()});
-		scene.timers[keys2[i]] = new Splat.Timer(undefined, 500, function(){this.reset()});
-		scene.timers[keys3[i]] = new Splat.Timer(undefined, 500, function(){this.reset()});
+		scene.timers[keys1[i]] = new Splat.Timer(undefined, 300, function(){this.reset()});
+		scene.timers[keys2[i]] = new Splat.Timer(undefined, 300, function(){this.reset()});
+		scene.timers[keys3[i]] = new Splat.Timer(undefined, 300, function(){this.reset()});
 	}	
 }
 
@@ -89,7 +89,6 @@ function checkCollisions(row,column){
 	entity = new Splat.AnimatedEntity(0, 0, 100, 140, game.images.get("square0"), 0, 0);
 	entity.x = column *100;
 	entity.y = (row*100) - 40;
-	console.log("cc");
 	for (var i = 0; i < balls.length; i++)  {
 		if(balls[i].collides(entity) && balls[i].vy < 0){
 			collide(balls[i]);
@@ -101,6 +100,9 @@ function checkCollisions(row,column){
 function collide(ball){
 	ball.vy *= -1;
 	score += 1;
+	if(Math.random() > 0.8){
+		addBall();
+	}
 }
 
 function addBall(){
@@ -110,7 +112,7 @@ function addBall(){
 	//context.drawImage(game.images.get("ball"),canvas.width / 2 - 15,canvas.height - 30);	
 	var ball = new Splat.AnimatedEntity(canvas.width / 2 - ballImg.width, canvas.height -50, ballImg.height, ballImg.width, ballImg, 0, 0);
 	if(balls.length == 0){
-		speed = 0.4;
+		speed = 0.5;
 	}
 	if(Math.random() > 0.5){
 		direction = -1;
@@ -135,19 +137,24 @@ checkKB(this);
 
 checkTimers(this);
 
+var gameOverTest = true;
 for (var i = 0; i < balls.length; i++){
 	var b = balls[i];
 	b.move(elapsedMillis);
+	
 	if(b.x + b.width >= canvas.width){
 		b.vx *= -1;
 	}if(b.x <= 0){
 		b.vx *= -1;
 	}if(b.y + b.height >= canvas.height){
 		b.vy *= -1;
-	}if(b.y < 0){
-		gameOver = true;
+	}if(b.y > 0 && !gameOver){
+		gameOverTest = false;
 	}
 }
+if(gameOverTest){
+		gameOver = true;
+	}
 
 if(gameOver){
 	addBall(); //Hell yeah
@@ -161,28 +168,47 @@ if(gameOver){
 	});
 
 	var keyX = 0;
+	var scene = this;
 	for (var i =0; i < row1.length; i++) {
 			this.camera.drawAbsolute(context, function(){
+				var timer = scene.timers[keys1[i]];
 				//context.fillStyle="green";
 				//context.fillRect(25 + keyX, 100, 100, 100);
-				context.drawImage(game.images.get("square"+row1[i]),keyX, 100 - (10*row1[i]));
+				if(timer.running){
+					context.drawImage(game.images.get("square"+row1[i]),keyX, 100 - (10*row1[i]) - ((timer.time * .001) * 40));
+					//console.log(timer.time);
+				}else{
+					context.drawImage(game.images.get("square"+row1[i]),keyX, 100 - (10*row1[i]));
+				}
 				context.fillStyle="black";
 				context.font = "30px arial"
 				context.fillText(keys1[i], 50 + keyX, 130)
 			});
 			this.camera.drawAbsolute(context, function(){
+				var timer = scene.timers[keys2[i]];
 				context.fillStyle="green";
 				//context.fillRect(25 + keyX, 200, 100, 100);
-				context.drawImage(game.images.get("square"+row2[i]),keyX, 200 - (10*row2[i]));
+				if(timer.running){
+					context.drawImage(game.images.get("square"+row2[i]),keyX, 200 - (10*row2[i]) - ((timer.time * .001) * 40));
+					//console.log(timer.time);
+				}else{
+					context.drawImage(game.images.get("square"+row2[i]),keyX, 200 - (10*row2[i]));
+				}
 				context.fillStyle="black";
 				context.font = "30px arial"
 				context.fillText(keys2[i], 50 + keyX, 230)
 			});
 		
 			this.camera.drawAbsolute(context, function(){
+				var timer = scene.timers[keys3[i]];
 				context.fillStyle="green";
 				//context.fillRect(25 + keyX, 300, 100, 100);
-				context.drawImage(game.images.get("square"+row3[i]),keyX, 300 - (10*row3[i]));
+				if(timer.running){
+					context.drawImage(game.images.get("square"+row3[i]),keyX, 300 - (10*row3[i]) - ((timer.time * .001) * 40));
+					//console.log(timer.time);
+				}else{
+					context.drawImage(game.images.get("square"+row3[i]),keyX, 300 - (10*row3[i]));
+				}
 				context.fillStyle="black";
 				context.font = "30px arial"
 				context.fillText(keys3[i], 50 + keyX, 330)
