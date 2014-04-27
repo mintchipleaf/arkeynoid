@@ -39,9 +39,9 @@ function setHeights(){
 
 function setTimers(scene){
 	for (var i = 0; i < keys1.length; i++) {
-		scene.timers[keys1[i]] = new Splat.Timer(undefined, 1000, function(){this.reset()});
-		scene.timers[keys2[i]] = new Splat.Timer(undefined, 1000, function(){this.reset()});
-		scene.timers[keys3[i]] = new Splat.Timer(undefined, 1000, function(){this.reset()});
+		scene.timers[keys1[i]] = new Splat.Timer(undefined, 500, function(){this.reset()});
+		scene.timers[keys2[i]] = new Splat.Timer(undefined, 500, function(){this.reset()});
+		scene.timers[keys3[i]] = new Splat.Timer(undefined, 500, function(){this.reset()});
 	}	
 }
 
@@ -92,20 +92,32 @@ function checkCollisions(row,column){
 	console.log("cc");
 	for (var i = 0; i < balls.length; i++)  {
 		if(balls[i].collides(entity) && balls[i].vy < 0){
-			balls[i].vy *= -1;
-			//balls[i].resolveCollisionWith(entity);
-			score += 1;
+			collide(balls[i]);
 		}
 	}
 	//timer?
 }
 
+function collide(ball){
+	ball.vy *= -1;
+	score += 1;
+}
+
 function addBall(){
 	var ballImg = game.images.get("ball");
+	var direction = 1;
+	var speed = .3 + (Math.random() * 0.4);
 	//context.drawImage(game.images.get("ball"),canvas.width / 2 - 15,canvas.height - 30);	
 	var ball = new Splat.AnimatedEntity(canvas.width / 2 - ballImg.width, canvas.height -50, ballImg.height, ballImg.width, ballImg, 0, 0);
-	ball.vx = .3;
-	ball.vy = -.3;
+	if(balls.length == 0){
+		speed = 0.4;
+	}
+	if(Math.random() > 0.5){
+		direction = -1;
+	}
+
+	ball.vx = speed * direction;
+	ball.vy = speed * -1;
 	balls.push(ball);
 }
 
