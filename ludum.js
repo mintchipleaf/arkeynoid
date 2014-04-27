@@ -37,27 +37,50 @@ function setHeights(){
 	row3 = [4,4,4,4,4,4,4,4,4,4];
 }
 
-function checkKB(){
+function setTimers(scene){
+	for (var i = 0; i < keys1.length; i++) {
+		scene.timers[keys1[i]] = new Splat.Timer(undefined, 1000, function(){this.reset()});
+		scene.timers[keys2[i]] = new Splat.Timer(undefined, 1000, function(){this.reset()});
+		scene.timers[keys3[i]] = new Splat.Timer(undefined, 1000, function(){this.reset()});
+	}	
+}
+
+function checkKB(scene){
 	var key;
-	for (var i = 0; i <= keys1.length - 1; i++) {
+	for (var i = 0; i < keys1.length; i++) {
 			if(game.keyboard.consumePressed(keys1[i]) && row1[i] > 0){
 				row1[i] -= 1;
-				console.log(keys1[i] + " " + row1[i]);
-				checkCollisions(1,i);
+				//console.log(keys1[i] + " " + row1[i]);
+				//checkCollisions(1,i);
 				key = true;
+				scene.timers[keys1[i]].start();
 			}if(game.keyboard.consumePressed(keys2[i]) && row2[i] > 0){
 				row2[i] -= 1;
-				console.log(keys2[i] + " " + row2[i]);
-				checkCollisions(2,i);
+				//console.log(keys2[i] + " " + row2[i]);
+				//checkCollisions(2,i);
 				key = true;
+				scene.timers[keys2[i]].start();
 			}if(game.keyboard.consumePressed(keys3[i]) && row3[i] > 0){
 				row3[i] -= 1;
-				console.log(keys3[i] + " " + row3[i]);
-				checkCollisions(3,i);
+				//console.log(keys3[i] + " " + row3[i]);
+				//checkCollisions(3,i);
 				key = true;
+				scene.timers[keys3[i]].start();
 			}
 		if(key && gameOver){
 			game.scenes.switchTo("title");
+		}
+	}
+}
+
+function checkTimers(scene){
+	for (var i = 0; i < keys1.length; i++) {
+		if(scene.timers[keys1[i]].running){
+			checkCollisions(1,i);
+		}if(scene.timers[keys2[i]].running){
+			checkCollisions(2,i);
+		}if(scene.timers[keys3[i]].running){
+			checkCollisions(3,i);
 		}
 	}
 }
@@ -66,10 +89,11 @@ function checkCollisions(row,column){
 	entity = new Splat.AnimatedEntity(0, 0, 100, 140, game.images.get("square0"), 0, 0);
 	entity.x = column *100;
 	entity.y = (row*100) - 40;
+	console.log("cc");
 	for (var i = 0; i < balls.length; i++)  {
 		if(balls[i].collides(entity) && balls[i].vy < 0){
 			balls[i].vy *= -1;
-			balls[i].resolveCollisionWith(entity);
+			//balls[i].resolveCollisionWith(entity);
 			score += 1;
 		}
 	}
@@ -80,8 +104,8 @@ function addBall(){
 	var ballImg = game.images.get("ball");
 	//context.drawImage(game.images.get("ball"),canvas.width / 2 - 15,canvas.height - 30);	
 	var ball = new Splat.AnimatedEntity(canvas.width / 2 - ballImg.width, canvas.height -50, ballImg.height, ballImg.width, ballImg, 0, 0);
-	ball.vx = .5;
-	ball.vy = -.4;
+	ball.vx = .3;
+	ball.vy = -.3;
 	balls.push(ball);
 }
 
@@ -89,10 +113,15 @@ game.scenes.add("title", new Splat.Scene(canvas, function() {
 	balls = [];
 	gameOver = false;
 	addBall();
+	setTimers(this);
 	setHeights();
 }, function(elapsedMillis) {
+//scene.timers("")
+this.timers.timerName = new Splat.Timer();
 
-checkKB();
+checkKB(this);
+
+checkTimers(this);
 
 for (var i = 0; i < balls.length; i++){
 	var b = balls[i];
@@ -109,7 +138,7 @@ for (var i = 0; i < balls.length; i++){
 }
 
 if(gameOver){
-	addBall();
+	addBall(); //Hell yeah
 }
 
 }, function(context) {
