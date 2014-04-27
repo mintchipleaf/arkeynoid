@@ -7,7 +7,8 @@ var manifest = {
 		"square2":"images/square2.png",
 		"square3":"images/square3.png",
 		"square4":"images/square4.png",
-		"ball":"images/ball.png"
+		"ball":"images/ball.png",
+		"paddle":"images/paddle.png"
 	},
 	"sounds": {
 	},
@@ -126,6 +127,11 @@ function addBall(){
 game.scenes.add("title", new Splat.Scene(canvas, function() {
 	balls = [];
 	gameOver = false;
+	score = 0;
+
+	var paddleImg = game.images.get("paddle");
+	player = new Splat.AnimatedEntity(canvas.width / 2 - (paddleImg / 2), canvas.height - 35, paddleImg.width, paddleImg.height, paddleImg, 0, 0);
+
 	addBall();
 	setTimers(this);
 	setHeights();
@@ -143,8 +149,10 @@ for (var i = 0; i < balls.length; i++){
 	b.move(elapsedMillis);
 	
 	if(b.x + b.width >= canvas.width){
+		b.x = canvas.width - b.width;
 		b.vx *= -1;
 	}if(b.x <= 0){
+		b.x = 0;
 		b.vx *= -1;
 	}if(b.y + b.height >= canvas.height){
 		b.vy *= -1;
@@ -220,8 +228,6 @@ if(gameOver){
 	for (var i = 0; i < balls.length; i++) {
 		if (!balls[i].counted) {
 			balls[i].draw(context);		//draw walls 
-		} else {
-			pickups.splice(pickups[i], 1);
 		}
 	}
 
