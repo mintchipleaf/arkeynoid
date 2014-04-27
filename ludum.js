@@ -23,7 +23,9 @@ var game = new Splat.Game(canvas, manifest);
 var paddle;
 var entity;
 var gameOver = false;
-var score = 0;
+var gameWon = false;
+var lives = 3;
+var paddleLives = 3;
 var balls = [];
 var row1 = [];
 var row2 = [];
@@ -111,7 +113,7 @@ function addBall(){
 	var direction = 1;
 	var speed = .3 + (Math.random() * 0.4);
 	//context.drawImage(game.images.get("ball"),canvas.width / 2 - 15,canvas.height - 30);	
-	var ball = new Splat.AnimatedEntity(canvas.width / 2 - ballImg.width, canvas.height -50, ballImg.height, ballImg.width, ballImg, 0, 0);
+	var ball = new Splat.AnimatedEntity(canvas.width / 2 - ballImg.width, canvas.height - 100, ballImg.height, ballImg.width, ballImg, 0, 0);
 	if(balls.length == 0){
 		speed = 0.5;
 	}
@@ -124,13 +126,30 @@ function addBall(){
 	balls.push(ball);
 }
 
+function paddleX(){
+	var lowBallX;
+	for (var i = 0; i < balls.length; i++)  {
+		if(balls[i].y > lowBallX && balls[i].vy > 0 || !lowBallX){
+			lowBallX = balls[i].x - balls[i].width;
+		}
+	}
+	paddle.vx = 0;
+	if(lowBallX < paddle.x){
+		paddle.vx = -1;
+	}if(lowBallX > paddle.x + paddle.width){
+		paddle.vx = 1;
+	}else{
+		paddle.x = lowBallX - (paddle.width / 2) + 30;
+	}
+}
+
 game.scenes.add("title", new Splat.Scene(canvas, function() {
 	balls = [];
 	gameOver = false;
 	score = 0;
 
 	var paddleImg = game.images.get("paddle");
-	player = new Splat.AnimatedEntity(canvas.width / 2 - (paddleImg / 2), canvas.height - 35, paddleImg.width, paddleImg.height, paddleImg, 0, 0);
+	paddle = new Splat.AnimatedEntity(canvas.width / 2 , canvas.height - 50, paddleImg.width, paddleImg.height, paddleImg, 0, 0);
 
 	addBall();
 	setTimers(this);
@@ -154,12 +173,21 @@ for (var i = 0; i < balls.length; i++){
 	}if(b.x <= 0){
 		b.x = 0;
 		b.vx *= -1;
-	}if(b.y + b.height >= canvas.height){
+	}if(balls[i].collides(paddle)){
+		b.y = paddle.y - b.height;
 		b.vy *= -1;
-	}if(b.y > 0 && !gameOver){
+	}if(balls[i].y > canvas.height){
+		balls.splice(i,1);
+		paddleLives -= 1;
+	}
+	if(b.y > 0 && !gameOver){
 		gameOverTest = false;
 	}
 }
+
+paddleX();
+paddle.move(elapsedMillis);
+
 if(gameOverTest){
 		gameOver = true;
 	}
@@ -231,12 +259,20 @@ if(gameOver){
 		}
 	}
 
+	paddle.draw(context);
+
 	if(gameOver){
 		//this.camera.drawAbsolute(context, function() {
 			context.fillStyle = "#ffffff";
 			context.font = "190px arial";
-			context.fillText("Game Over", 0, canvas.height / 2 + 100);
+			context.fillText("You Lost", 100, canvas.height / 2 + 100);
 		//});
+	}
+
+	if(gameWon){
+		context.fillStyle = "#ffffff";
+		context.font = "190px arial";
+		context.fillText("You Won", 100, canvas.height / 2 + 100);
 	}
 
 	this.camera.drawAbsolute(context, function() {
