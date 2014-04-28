@@ -211,6 +211,7 @@ if(gameOver && !gameWon){
 	var scene = this;
 	for (var i =0; i < row1.length; i++) {
 			this.camera.drawAbsolute(context, function(){
+				var text = keys1[i];
 				var timer = scene.timers[keys1[i]];
 				//context.fillStyle="green";
 				//context.fillRect(25 + keyX, 100, 100, 100);
@@ -222,10 +223,14 @@ if(gameOver && !gameWon){
 				}
 				context.fillStyle="black";
 				context.font = "30px arial"
-				context.fillText(keys1[i], 50 + keyX, 130)
+				context.fillText(text, 50 + keyX, 130)
 			});
 			this.camera.drawAbsolute(context, function(){
+				var text = keys2[i];
 				var timer = scene.timers[keys2[i]];
+				if(text == "semicolon"){
+					text = ";";
+				}
 				context.fillStyle="green";
 				//context.fillRect(25 + keyX, 200, 100, 100);
 				if(timer.running){
@@ -236,11 +241,19 @@ if(gameOver && !gameWon){
 				}
 				context.fillStyle="black";
 				context.font = "30px arial"
-				context.fillText(keys2[i], 50 + keyX, 230)
+				context.fillText(text, 50 + keyX, 230)
 			});
 		
 			this.camera.drawAbsolute(context, function(){
+				var text = keys3[i];
 				var timer = scene.timers[keys3[i]];
+				if(text == "comma"){
+					text = ",";
+				}if(text == "period"){
+					text = ".";
+				}if(text == "forwardslash"){
+					text = "/";
+				}
 				context.fillStyle="green";
 				//context.fillRect(25 + keyX, 300, 100, 100);
 				if(timer.running){
@@ -251,7 +264,7 @@ if(gameOver && !gameWon){
 				}
 				context.fillStyle="black";
 				context.font = "30px arial"
-				context.fillText(keys3[i], 50 + keyX, 330)
+				context.fillText(text, 50 + keyX, 330)
 			});
 		
 		keyX += 100;
