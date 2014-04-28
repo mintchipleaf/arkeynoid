@@ -196,7 +196,7 @@ if(paddleLives <= 0){
 	gameWon = true;
 }
 
-if(gameOver && !gameWon){
+if(gameOver || gameWon){
 	addBall(); //Hell yeah
 }
 
@@ -213,8 +213,6 @@ if(gameOver && !gameWon){
 			this.camera.drawAbsolute(context, function(){
 				var text = keys1[i];
 				var timer = scene.timers[keys1[i]];
-				//context.fillStyle="green";
-				//context.fillRect(25 + keyX, 100, 100, 100);
 				if(timer.running){
 					context.drawImage(game.images.get("square"+row1[i]),keyX, 100 - (10*row1[i]) - ((timer.time * .001) * 40));
 					//console.log(timer.time);
@@ -232,7 +230,6 @@ if(gameOver && !gameWon){
 					text = ";";
 				}
 				context.fillStyle="green";
-				//context.fillRect(25 + keyX, 200, 100, 100);
 				if(timer.running){
 					context.drawImage(game.images.get("square"+row2[i]),keyX, 200 - (10*row2[i]) - ((timer.time * .001) * 40));
 					//console.log(timer.time);
@@ -255,10 +252,8 @@ if(gameOver && !gameWon){
 					text = "/";
 				}
 				context.fillStyle="green";
-				//context.fillRect(25 + keyX, 300, 100, 100);
 				if(timer.running){
 					context.drawImage(game.images.get("square"+row3[i]),keyX, 300 - (10*row3[i]) - ((timer.time * .001) * 40));
-					//console.log(timer.time);
 				}else{
 					context.drawImage(game.images.get("square"+row3[i]),keyX, 300 - (10*row3[i]));
 				}
@@ -276,7 +271,9 @@ if(gameOver && !gameWon){
 		}
 	}
 
-	paddle.draw(context);
+	if(!gameOver && !gameWon){
+		paddle.draw(context);
+	}
 
 	if(gameOver && !gameWon){
 		//this.camera.drawAbsolute(context, function() {
