@@ -103,7 +103,7 @@ function checkCollisions(row,column){
 function collide(ball){
 	ball.vy *= -1;
 	score += 1;
-	if(Math.random() > 0.8){
+	if(Math.random() > 0.5){
 		addBall();
 	}
 }
@@ -134,12 +134,12 @@ function paddleX(){
 		}
 	}
 	paddle.vx = 0;
-	if(lowBallX < paddle.x){
-		paddle.vx = -1;
-	}if(lowBallX > paddle.x + paddle.width){
-		paddle.vx = 1;
+	if(lowBallX < paddle.x + 50){
+		paddle.vx = -0.5;
+	}if(lowBallX > paddle.x + 50){
+		paddle.vx = 0.5;
 	}else{
-		paddle.x = lowBallX - (paddle.width / 2) + 30;
+		//paddle.x = lowBallX - (paddle.width / 2) + 30;
 	}
 }
 
@@ -190,9 +190,13 @@ paddle.move(elapsedMillis);
 
 if(gameOverTest){
 		gameOver = true;
-	}
+}
 
-if(gameOver){
+if(paddleLives <= 0){
+	gameWon = true;
+}
+
+if(gameOver && !gameWon){
 	addBall(); //Hell yeah
 }
 
@@ -261,7 +265,7 @@ if(gameOver){
 
 	paddle.draw(context);
 
-	if(gameOver){
+	if(gameOver && !gameWon){
 		//this.camera.drawAbsolute(context, function() {
 			context.fillStyle = "#ffffff";
 			context.font = "190px arial";
@@ -275,11 +279,18 @@ if(gameOver){
 		context.fillText("You Won", 100, canvas.height / 2 + 100);
 	}
 
-	this.camera.drawAbsolute(context, function() {
+	/*this.camera.drawAbsolute(context, function() {
 			context.fillStyle = "#ffffff";
 			context.font = "50px arial";
 			context.fillText(score, canvas.width / 50, 50);
+	});*/
+
+	this.camera.drawAbsolute(context, function() {
+		context.fillStyle = "#ffffff";
+		context.font = "50px arial";
+		context.fillText("Paddle Lives: "+ paddleLives, canvas.width - 350, 50);
 	});
+
 
 }));
 game.scenes.switchTo("loading");
