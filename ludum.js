@@ -235,10 +235,6 @@ if(keys && gameOver){
 	game.scenes.switchTo("title");
 }
 
-if(game.keyboard.isPressed("shift")){
-	gameWon = true;
-}
-
 }, function(context) {
 	//draw background gradient
 	this.camera.drawAbsolute(context, function() {
